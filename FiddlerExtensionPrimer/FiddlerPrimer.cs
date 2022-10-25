@@ -1,4 +1,5 @@
-﻿using Fiddler;
+﻿using System;
+using Fiddler;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -65,8 +66,39 @@ namespace FiddlerExtensionPrimer
             }
             _serviceMenu = CreateServiceMenu();
             FiddlerApplication.UI.mnuMain.MenuItems.Add(_serviceMenu);
+
+
+            var codeCreatorMenu = new MenuItem("Code Creator");
+
+            SingleSessionAction(
+            codeCreatorMenu,
+            "C#",
+            session =>
+            {
+                var form = new CodeCreatorForm(session)
+                {
+                    Parent = FiddlerApplication.UI.ParentForm,
+                    StartPosition = FormStartPosition.CenterParent
+                };
+                form.ShowDialog(FiddlerApplication.UI.ParentForm);
+            });
+
+            //MultiSessionAction(
+            //    codeCreatorMenu,
+            //    "Are all authorized",
+            //    sessions =>
+            //    {
+            //        var isAuthorized = sessions.All(s => s.RequestHeaders.Exists("Authorization"));
+            //        MessageBox.Show(isAuthorized?"All request are authorized":"Some request are NOT authorized");
+            //    });
+
+
+            FiddlerApplication.UI.mnuSessionContext.MenuItems.Add(codeCreatorMenu);
+            codeCreatorMenu.Index = 0;
         }
 
+
+        
         public void OnBeforeUnload()
         {
 
@@ -114,6 +146,32 @@ namespace FiddlerExtensionPrimer
         public void OnBeforeReturningError(Session oSession)
         {
 
+        }
+
+        private void SingleSessionAction(MenuItem menuItem, string name, Action<Session> action)
+        {
+            menuItem.MenuItems.Add(
+                new MenuItem(
+                    name,
+                    (sender, args) =>
+                    {
+                        var session = FiddlerApplication.UI.GetSelectedSessions(1).FirstOrDefault();
+                        if (session == null) return;
+                        action(session);
+                    }));
+        }
+
+        private void MultiSessionAction(MenuItem menuItem, string name, Action<Session[]> action)
+        {
+            menuItem.MenuItems.Add(
+                new MenuItem(
+                    name,
+                    (sender, args) =>
+                    {
+                        var sessions = FiddlerApplication.UI.GetSelectedSessions();
+                        if (sessions == null) return;
+                        action(sessions);
+                    }));
         }
     }
 }

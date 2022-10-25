@@ -55,6 +55,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CodeCreatorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CodeCreatorForm.Designer.cs">
+      <DependentUpon>CodeCreatorForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="FiddlerPrimer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServicesSettings.cs" />
@@ -71,6 +77,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="CodeCreatorForm.resx">
+      <DependentUpon>CodeCreatorForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ServicesSettingsForm.resx">
       <DependentUpon>ServicesSettingsForm.cs</DependentUpon>
     </EmbeddedResource>
